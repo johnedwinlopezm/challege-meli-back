@@ -1,18 +1,31 @@
 import { ItemResponse } from "../../models/itemResponse";
-import { Search, Item } from "../../models/search";
+import { Search, Item, Filter } from "../../models/search";
 import { SearchResponse } from "../../models/searchResponse";
 
 export class SearchMapper {
-    getSearchToResponse(search: Search): SearchResponse {
+    getSearchToResponse(search: Search, name: string, lastname: string): SearchResponse {
         const searchResponse: SearchResponse = {
             author: {
-                name: '',
-                lastname: ''
+                name: name,
+                lastname: lastname
             },
-            categories: [],
+            categories: this.getCategories(search.filters),
             items: this.getResultToItems(search.results)
         }
         return searchResponse;
+    }
+    getCategories(filters:Filter[]): string[] {
+        const categories: string[] = [];
+        if(filters && filters.length > 0){
+            const category = filters.find( fil => fil.id === 'category');
+            if(category && category.values) {
+                category.values.forEach( val => {
+                    categories.push(... val.path_from_root.map( (path) => { return path.name}));
+                });
+            }
+
+        }
+        return categories;
     }
 
     getResultToItems(results: Item[]): ItemResponse[] {

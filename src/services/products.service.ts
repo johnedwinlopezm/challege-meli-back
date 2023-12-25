@@ -1,16 +1,20 @@
 import axios from 'axios';
 import boom from '@hapi/boom'
+import { SearchMapper } from './mappers/productsMapper'
+import { Search } from '../models/search';
 
 export class ProductsService {
 
-  constructor(){
+  mapper = new SearchMapper();
+
+  constructor() {
   }
 
   headers = {
     'Content-Type': 'application/json'
   };
 
-  async getProducts(producto: string) {
+  async getProducts(producto: string, name: string = '', lastname: string = '') {
     try {
       const prod = producto.trim().replace(' ', '%20');
       const url = `http://api.mercadolibre.com/sites/MLA/search?limit=4&q=​​​${prod}`;
@@ -18,33 +22,33 @@ export class ProductsService {
       const { data, status } = await axios.get<any>(
         url,
         {
-          headers : {
+          headers: {
             ... this.headers
           }
         },
       );
-      return data;
+      return this.mapper.getSearchToResponse(data, name, lastname);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log('error message: ', error.message);
         return boom.notFound(error.message);
       } else {
         console.log('unexpected error: ', error);
-        return boom. notImplemented('An unexpected error occurred');
+        return boom.notImplemented('An unexpected error occurred');
       }
     }
 
   }
 
-  async getDescriptionItem(itemId: string){
+  async getDescriptionItem(itemId: string) {
     try {
       //const url = `https://api.mercadolibre.com/items/MLA1136716168`;
       const url = `https://api.mercadolibre.com/items/​​​${itemId.trim()}`;
-      console.log('get item: '+url);
+      console.log('get item: ' + url);
       const { data, status } = await axios.get<any>(
         encodeURI(url),
         {
-          headers : {
+          headers: {
             ... this.headers
           }
         },
@@ -56,7 +60,7 @@ export class ProductsService {
         return boom.notFound(error.message);
       } else {
         console.log('unexpected error: ', error);
-        return boom. notImplemented('An unexpected error occurred');
+        return boom.notImplemented('An unexpected error occurred');
       }
     }
   }

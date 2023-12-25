@@ -3,7 +3,8 @@ export interface Search {
     country_default_time_zone: string,
     query: string,
     paging: Paging,
-    results: Item[]
+    results: Item[],
+    filters: Filter[]
 }
 
 interface Paging {
@@ -80,4 +81,16 @@ export interface Filter {
     id: string,
     name: string,
     type: string,
+    values: Value[]
+}
+
+export interface Value {
+    id: string,
+    name: string,
+    path_from_root: Path[]
+}
+
+export interface Path {
+    id: string,
+    name: string
 }

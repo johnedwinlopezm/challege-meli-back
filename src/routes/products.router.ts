@@ -10,7 +10,8 @@ let search: SearchResponse;
 router.get('/items', validateAuthorization, async (req, res) => {
   const { q } = req.query;
   if (q) {
-    const data = await productService.getProducts(q.toString());
+    const { name , lastname } =  req.headers;
+    const data = await productService.getProducts(q.toString(), name.toString(), lastname.toString());
     res.status(201).json(data);
   } else {
     res.status(201).send('producto nulo');
