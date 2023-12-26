@@ -13,7 +13,6 @@ router.get('/items', validateAuthorization, async (req, res) => {
   const { q } = req.query;
   if (q) {
     const { name, lastname } = req.headers;
-    console.log('q valor'+ q);
     productService.getProducts(q.toString(), name.toString(), lastname.toString()).then((response) => {
       res.status(200).json(response);
     }

@@ -34,17 +34,9 @@ export class ProductsService {
 
   async getProducts(producto: string, name: string = '', lastname: string = ''): Promise<SearchResponse | any> {
     return new Promise((resolve, reject) => {
-      const prod = producto.trim().replace(' ', '%20');
-      const url = `${this.API_URL}/sites/MLA/search?limit=4&q=​​​${producto}`;
-      console.log('url consumo: ' + url);
-      this.instance.interceptors.request.use(function (config) {
-        // Do something before request is sent
-        const headers = config.headers
-        return config;
-      }, function (error) {
-        // Do something with request error
-        return Promise.reject(error);
-      });
+      let url = `${this.API_URL}/sites/MLA/search?limit=4&q=%producto%`;
+      //let url = 'https://api.mercadolibre.com/sites/MLA/search?limit=4&q=%producto%';
+      url = url.replace('%producto%', producto);
       this.instance.get<any>(url ,this.configAxios).then(response => {
         resolve(this.mapper.getSearchToResponse(response.data, name, lastname))
       }).catch(error => {
@@ -74,9 +66,9 @@ export class ProductsService {
 
   getItem(itemId: string): Promise<ItemD> {
     return new Promise((resolve, reject) => {
-      // const url = 'https://api.mercadolibre.com/items/MLA1136716168';
-      const url: string = `${this.API_URL}/items/​​​${itemId}`;
-      console.log('get item: ' + url);
+      //let url = 'https://api.mercadolibre.com/sites/MLA/search?limit=4&q=%producto%';
+      let url: string = `${this.API_URL}/items/%item%`;
+      url = url.replace('%item%', itemId);
       this.instance.get<ItemD>(url, this.configAxios).then(response => { 
         console.log('entro aca' + response.data );
         resolve(response.data);
@@ -89,8 +81,8 @@ export class ProductsService {
   getDescription(itemId: string): Promise<Description> {
     return new Promise((resolve, reject) => {
       // const url = 'https://api.mercadolibre.com/items/MLA1136716168/description';
-      const url: string = `${this.API_URL}/items/​​​${itemId}/description`;
-      console.log('get item: ' + url);
+      let url: string = `${this.API_URL}/items/%item%/description`;
+      url = url.replace('%item%', itemId);
       this.instance.get<Description>(url, this.configAxios).then(response => { 
         console.log('entro aca' + response.data );
         resolve(response.data);
