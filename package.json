@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/main.js",
   "scripts": {
-    "start": "nodemon dist/index.js",
+    "start": "nodemon dist/main.js",
     "start2": "tsc && node dist/main.js",
     "dev": "nodemon src/index.ts",
     "lint": "eslint . --ext .ts",

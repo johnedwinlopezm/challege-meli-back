@@ -5,6 +5,7 @@ import { errorHandler, logErrors } from './middlewares/error.handler';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import { routerApi } from './routes';
 
 const app = express();
 const port = 3000;
@@ -15,7 +16,12 @@ app.use(logger())
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(cookieParser());
-app.use('/', productsRoutes);
+app.get('/', async (req, res) => {
+  
+    res.status(200).send('entro aca');
+});
+routerApi(app);
+//app.use('/api', productsRoutes);
 // se setea los middlewares
 //app.use(logErrors);
 //app.use(errorHandler);

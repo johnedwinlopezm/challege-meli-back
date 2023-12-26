@@ -1,4 +1,4 @@
-import { Router, response } from 'express';
+import { Router } from 'express';
 import { SearchResponse } from '../models/searchResponse';
 import { ProductsService } from '../services/products.service';
 import { validateAuthorization } from '../middlewares/error.handler';
@@ -6,6 +6,8 @@ import { validateAuthorization } from '../middlewares/error.handler';
 const router = Router();
 const productService = new ProductsService();
 let search: SearchResponse;
+
+
 
 router.get('/items', validateAuthorization, async (req, res) => {
   const { q } = req.query;
