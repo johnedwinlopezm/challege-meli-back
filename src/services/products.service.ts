@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import boom from '@hapi/boom'
 import { SearchMapper } from './mappers/productsMapper'
 import { SearchResponse } from '../models/searchResponse';
@@ -11,13 +11,22 @@ export class ProductsService {
   mapper = new SearchMapper();
   instance = axios.create();
 
-  headers = {
-    Accept: "application/json",
-    "Content-Type": "application/json;charset=UTF-8",
-    "Access-Control-Allow-Origin": "*"
+  configAxios: AxiosRequestConfig = {
+    headers: {
+      Accept: '*/*',
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      Connection: 'keep-alive',
+      'X-Frame-Options': 'DENY',
+      'X-Content-Type-Options': 'nosniff',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'PUT, GET, POST, DELETE, OPTIONS',
+      'Access-Control-Max-Age': '86400',
+      'X-Cache':'Miss from cloudfront'
+    }
   };
 
-  API_URL = "http://api.mercadolibre.com";
+  API_URL = 'https://api.mercadolibre.com';
 
   constructor() {
   }
@@ -26,9 +35,17 @@ export class ProductsService {
   async getProducts(producto: string, name: string = '', lastname: string = ''): Promise<SearchResponse | any> {
     return new Promise((resolve, reject) => {
       const prod = producto.trim().replace(' ', '%20');
-      const url = `${this.API_URL}/sites/MLA/search?limit=4&q=​​​${prod}`;
+      const url = `${this.API_URL}/sites/MLA/search?limit=4&q=​​​${producto}`;
       console.log('url consumo: ' + url);
-      this.instance.get<any>(url ,{ headers: this.headers}).then(response => {
+      this.instance.interceptors.request.use(function (config) {
+        // Do something before request is sent
+        const headers = config.headers
+        return config;
+      }, function (error) {
+        // Do something with request error
+        return Promise.reject(error);
+      });
+      this.instance.get<any>(url ,this.configAxios).then(response => {
         resolve(this.mapper.getSearchToResponse(response.data, name, lastname))
       }).catch(error => {
         if (axios.isAxiosError(error)) {
@@ -57,10 +74,11 @@ export class ProductsService {
 
   getItem(itemId: string): Promise<ItemD> {
     return new Promise((resolve, reject) => {
-      // const url = "https://api.mercadolibre.com/items/MLA1136716168";
+      // const url = 'https://api.mercadolibre.com/items/MLA1136716168';
       const url: string = `${this.API_URL}/items/​​​${itemId}`;
       console.log('get item: ' + url);
-      this.instance.get<ItemD>(url, { headers: this.headers}).then(response => { 
+      this.instance.get<ItemD>(url, this.configAxios).then(response => { 
+        console.log('entro aca' + response.data );
         resolve(response.data);
       }).catch(error => {
         reject(error)
@@ -70,10 +88,11 @@ export class ProductsService {
 
   getDescription(itemId: string): Promise<Description> {
     return new Promise((resolve, reject) => {
-      // const url = "https://api.mercadolibre.com/items/MLA1136716168/description";
+      // const url = 'https://api.mercadolibre.com/items/MLA1136716168/description';
       const url: string = `${this.API_URL}/items/​​​${itemId}/description`;
       console.log('get item: ' + url);
-      this.instance.get<Description>(url, { headers: this.headers}).then(response => { 
+      this.instance.get<Description>(url, this.configAxios).then(response => { 
+        console.log('entro aca' + response.data );
         resolve(response.data);
       }).catch(error => {
         reject(error)
